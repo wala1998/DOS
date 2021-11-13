@@ -10,12 +10,12 @@ app = Flask(__name__)
 def home():
     return 'catalog server'
 
-
+#searchbytopicTested
 @app.route('/books', methods=['GET'])
-def getBooksByTopic():
+def getBooksByTopic(): 
     topic = request.args.get('topic')
-    f = open('books_catalog.json',) 
-    data = json.load(f) 
+    file = open('books_catalog.json',) 
+    data = json.load(file) 
     booksList = []
     for book in data['books']: 
         if book['topic'] == topic :
@@ -23,12 +23,22 @@ def getBooksByTopic():
             'id': book['id'],
             'title': book['title']}
             booksList.append(bookDict)
-            
-    f.close()
+            file.close()
 
-    if len(booksList) == 0 :
-        abort(404)
+        if len(booksList) == 0 : 
+            abort(404)
 
-    return jsonify(booksList)
+    return jsonify(booksList)  
+  #searchbybooksID
+@app.route('/books/<bookid>', methods=['GET'])
+def getById(bookid):
+  file = open('books_catalog.json',)
+  data = json.load(file)
+  
+  for book in data['books']:
+    if book['id'] == int(bookid) :
+       return jsonify(book)
+  file.close()
+  abort(404)
     
 
