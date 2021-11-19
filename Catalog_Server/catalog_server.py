@@ -9,7 +9,29 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return 'catalog server'
+#update the books quantity 
+@app.route('/books/<bookid>', methods=['PUT'])
+def updateQuantity(bookid):
 
+    body = request.json
+    nQuantity = body["quantity"]
+
+    f = open('books_catalog.json','r+') 
+    data = json.load(f) 
+    for book in data['books']: 
+        if book['id'] == int(bookid) :
+            if (book['quantity'] < 1) or (nQuantity < 0) : 
+                return abort(403) 
+            book['title'] = body["title"]
+            book['topic'] = body["topic"]
+            book['quantity'] = nQuantity
+            book['price'] = body["price"]
+    f.close()
+
+    with open("books_catalog.json", "w") as jsonFile:
+        json.dump(data, jsonFile)
+
+    return flask.Response(status=204)
 #searchbytopicTested
 @app.route('/books', methods=['GET'])
 def getBooksByTopic(): 
